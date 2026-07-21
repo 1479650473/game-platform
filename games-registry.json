@@ -3,25 +3,25 @@
   "games": {
     "sudoku": {
       "name": "数独",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "url": "https://github.com/1479650473/game-platform/releases/download/v1.0.0/sudoku.zip",
       "changelog": "初始版本"
     },
     "tetris": {
       "name": "俄罗斯方块",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "url": "https://github.com/1479650473/game-platform/releases/download/v1.0.0/tetris.zip",
       "changelog": "初始版本"
     },
     "minesweeper": {
       "name": "扫雷",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "url": "https://github.com/1479650473/game-platform/releases/download/v1.0.0/minesweeper.zip",
       "changelog": "初始版本"
     },
     "snake": {
       "name": "贪吃蛇",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "url": "https://github.com/1479650473/game-platform/releases/download/v1.0.0/snake.zip",
       "changelog": "初始版本"
     }

@@ -2,7 +2,7 @@
   "id": "sudoku",
   "name": "数独",
   "description": "经典数独逻辑推理游戏，支持多种难度",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "csy & gr",
   "entry": "index.html",
   "icon": "icon.png",

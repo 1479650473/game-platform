@@ -8,6 +8,7 @@
 - [最小可运行示例](#最小可运行示例)
 - [用 React + Vite 开发](#用-react--vite-开发)
 - [用 Vue + Vite 开发](#用-vue--vite-开发)
+- [统一设计规范](#统一设计规范)
 - [game.json 字段详解](#gamejson-字段详解)
 - [游戏窗口 API](#游戏窗口-api)
 - [本地测试](#本地测试)
@@ -190,6 +191,133 @@ export default defineConfig({
   base: './',
 });
 ```
+
+---
+
+## 统一设计规范
+
+所有接入 GamePlatform 的游戏都必须遵循以下统一设计规范，确保视觉风格一致性。
+
+### 全局 CSS 变量
+
+在每个游戏的 `src/index.css` 中定义以下变量：
+
+```css
+:root {
+  --bg-deep: #09090d;
+  --bg-card: rgba(14, 14, 26, 0.55);
+  --accent: #2dd4bf;
+  --accent-glow: rgba(45, 212, 191, 0.12);
+  --accent-border: rgba(45, 212, 191, 0.25);
+  --text-heading: #e4e4e7;
+  --text-body: #a1a1aa;
+  --text-muted: #52525b;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --radius-card: 16px;
+}
+```
+
+### 字体
+
+在 `index.html` `<head>` 中必须添加 Google Fonts 链接：
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+```
+
+**字体用法**：
+
+| 用途 | 字体 | 示例 |
+|------|------|------|
+| UI 文字、标题 | `'Outfit', sans-serif` | 标题、按钮、标签 |
+| 数字、得分、计时 | `'JetBrains Mono', monospace` | 分数、计时器、计数器 |
+
+**严禁使用**：`Inter`、`Arial`、系统默认字体栈。禁止 Emoji 作为图标。
+
+### 色彩
+
+| 色值 | 用途 | 说明 |
+|------|------|------|
+| `#09090d` | 页面背景 | 非纯黑，禁止 `#000000` |
+| `rgba(14, 14, 26, 0.55)` | 卡片/面板背景 | Liquid Glass 半透明 |
+| `#2dd4bf` | 主强调色 | Teal 青绿，统一平台 accent |
+| `#e4e4e7` | 标题文字 | 白色偏移，避免纯白 |
+| `#a1a1aa` | 正文文字 | 中灰度 |
+| `#52525b` | 辅助文字 | 低对比度 |
+| `rgba(255, 255, 255, 0.06)` | 边框 | 微妙边框 |
+| `rgba(45, 212, 191, 0.25)` | accent 边框 | 重点组件边框 |
+
+**严禁使用**：
+- 紫色/蓝色渐变（如 `#8b5cf6` → `#7c3aed`）
+- 霓虹发光阴影（如 `box-shadow: 0 0 30px purple`）
+- 纯黑色文字或背景
+- 灰色文字放在有色背景上
+
+### Liquid Glass 卡片
+
+```css
+.card {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 2px 16px rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-card);
+  transition: all 0.35s var(--ease-spring);
+}
+```
+
+关键：`inset 0 1px 0` 内层高光线 + 外层投影，区别于普通毛玻璃。
+
+### 弹性动效
+
+所有 UI 过渡和动画使用 `cubic-bezier(0.16, 1, 0.3, 1)`：
+
+```css
+transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+```
+
+**禁止使用**：`ease` / `ease-in-out` / `linear` 过渡，bounce/elastic 关键帧。
+
+### 按钮规范
+
+```css
+.btn {
+  background: var(--accent);
+  color: #09090d;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 24px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-spring);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+```
+
+### 不使用 framer-motion
+
+为了保持依赖简洁和 Electron 窗口性能，所有动效用纯 CSS 实现。不安装 `framer-motion`。
+
+### 参考示例
+
+查看四个内置游戏的源码作为参考：
+
+- `resources/builtin/tetris/` — 俄罗斯方块
+- `resources/builtin/minesweeper/` — 扫雷
+- `resources/builtin/sudoku/` — 数独
+- `resources/builtin/snake/` — 贪吃蛇
 
 ---
 

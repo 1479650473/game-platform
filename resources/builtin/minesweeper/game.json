@@ -2,7 +2,7 @@
   "id": "minesweeper",
   "name": "扫雷",
   "description": "经典扫雷益智游戏",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "csy & gr",
   "entry": "index.html",
   "icon": "icon.png",

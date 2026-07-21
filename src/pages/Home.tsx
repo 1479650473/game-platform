@@ -115,19 +115,23 @@ export default function Home() {
   return (
     <div className="home">
       <header className="home-header">
-        <h1 className="home-title">游戏平台</h1>
-        <p className="home-subtitle">选择一个游戏开始游玩</p>
-        <p className="home-credit">develop by csy</p>
-        <button
-          className="home-update-btn"
-          onClick={() => setShowUpdateDialog(true)}
-          title="检查更新"
-        >
-          {updateAvailable ? (
-            <span className="home-update-dot" />
-          ) : null}
-          检查更新
-        </button>
+        <div className="home-header-left">
+          <h1 className="home-title">
+            <span>游戏</span>平台
+          </h1>
+          <p className="home-subtitle">选择一个游戏开始游玩</p>
+          <p className="home-credit">develop by csy</p>
+        </div>
+        <div className="home-header-right">
+          <button
+            className="home-update-btn"
+            onClick={() => setShowUpdateDialog(true)}
+            title="检查更新"
+          >
+            {updateAvailable && <span className="home-update-dot" />}
+            检查更新
+          </button>
+        </div>
       </header>
 
       {updateAvailable && gameUpdates.length > 0 && (
