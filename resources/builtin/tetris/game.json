@@ -1,0 +1,14 @@
+{
+  "id": "tetris",
+  "name": "俄罗斯方块",
+  "description": "经典方块消除益智游戏",
+  "version": "1.0.0",
+  "author": "csy & gr",
+  "entry": "index.html",
+  "icon": "icon.png",
+  "width": 800,
+  "height": 900,
+  "minWidth": 800,
+  "minHeight": 740,
+  "resizable": true
+}

@@ -1,0 +1,14 @@
+{
+  "id": "minesweeper",
+  "name": "扫雷",
+  "description": "经典扫雷益智游戏",
+  "version": "1.0.0",
+  "author": "csy & gr",
+  "entry": "index.html",
+  "icon": "icon.png",
+  "width": 640,
+  "height": 780,
+  "minWidth": 420,
+  "minHeight": 560,
+  "resizable": true
+}
