@@ -33,6 +33,20 @@ npm run electron:dev
 4. 提交 PR 到 `main` 分支
 5. 等待 review 和 CI 通过后合并
 
+## 开发新游戏
+
+想往平台里加游戏？详细教程见 [GAME_DEV_GUIDE.md](./GAME_DEV_GUIDE.md)。
+
+简要步骤：
+
+1. 用 React/Vite 或纯 HTML 创建游戏项目
+2. 关键：`vite.config.ts` 中设置 `base: './'`（确保资源路径正确）
+3. 编写 `game.json` 元数据文件
+4. 放到 `resources/builtin/<game-id>/` 下
+5. 在 `games-registry.json` 中添加条目
+6. 打包测试：`npm run package:dir`
+7. 提交 PR
+
 ## 添加新游戏
 
 1. 在 `resources/builtin/<game-id>/` 下放置游戏文件
