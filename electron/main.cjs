@@ -1,6 +1,8 @@
 const { app, BrowserWindow, Menu, dialog, ipcMain, shell } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs');
+const { initAutoUpdater, checkForUpdates, downloadUpdate, installUpdate, getUpdateStatus } = require('./updater.cjs');
+const { initGameUpdater, checkGameUpdates, updateGame } = require('./game-updater.cjs');
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -49,6 +51,18 @@ function copyDir(src, dest) {
   }
 }
 
+function compareVersions(a, b) {
+  const pa = (a || '0.0.0').split('.').map(Number);
+  const pb = (b || '0.0.0').split('.').map(Number);
+  for (let i = 0; i < 3; i++) {
+    const va = pa[i] || 0;
+    const vb = pb[i] || 0;
+    if (va > vb) return 1;
+    if (va < vb) return -1;
+  }
+  return 0;
+}
+
 function setupGamesDirectory() {
   const gamesPath = getUserGamesPath();
   const jsonPath = getGamesJsonPath();
@@ -78,9 +92,22 @@ function setupGamesDirectory() {
             const targetDir = getGameDir(entry.name);
             const builtinSrcDir = path.join(builtinPath, entry.name);
             const builtinHasAssets = fs.existsSync(path.join(builtinSrcDir, 'assets'));
-            const targetMissing = !fs.existsSync(targetDir);
-            const targetCorrupt = builtinHasAssets && fs.existsSync(targetDir) && !fs.existsSync(path.join(targetDir, 'assets'));
-            if (targetMissing || targetCorrupt) {
+            const targetExists = fs.existsSync(targetDir);
+            const targetMissing = !targetExists;
+            const targetCorrupt = builtinHasAssets && targetExists && !fs.existsSync(path.join(targetDir, 'assets'));
+
+            let targetVersion = '0.0.0';
+            const targetGameJson = path.join(targetDir, 'game.json');
+            if (targetExists && fs.existsSync(targetGameJson)) {
+              try {
+                const targetMeta = JSON.parse(fs.readFileSync(targetGameJson, 'utf-8'));
+                targetVersion = targetMeta.version || '0.0.0';
+              } catch (_) { /**/ }
+            }
+            const builtinVersion = gameMeta.version || '1.0.0';
+            const versionOutdated = compareVersions(builtinVersion, targetVersion) > 0;
+
+            if (targetMissing || targetCorrupt || versionOutdated) {
               if (fs.existsSync(targetDir)) {
                 fs.rmSync(targetDir, { recursive: true, force: true });
               }
@@ -422,6 +449,34 @@ function registerIpcHandlers() {
       gw.window.close();
     }
   });
+
+  ipcMain.handle('check-for-updates', () => {
+    return checkForUpdates().then(() => getUpdateStatus());
+  });
+
+  ipcMain.handle('download-update', () => {
+    return downloadUpdate();
+  });
+
+  ipcMain.handle('install-update', () => {
+    return installUpdate();
+  });
+
+  ipcMain.handle('get-update-status', () => {
+    return getUpdateStatus();
+  });
+
+  ipcMain.handle('check-game-updates', () => {
+    return checkGameUpdates();
+  });
+
+  ipcMain.handle('update-game', (_event, gameId) => {
+    return updateGame(gameId, (progress) => {
+      if (platformWindow && !platformWindow.isDestroyed()) {
+        platformWindow.webContents.send('game-update-progress', progress);
+      }
+    });
+  });
 }
 
 app.whenReady().then(() => {
@@ -429,6 +484,8 @@ app.whenReady().then(() => {
   registerIpcHandlers();
   createMenu();
   createPlatformWindow();
+  initAutoUpdater(platformWindow);
+  initGameUpdater(getUserGamesPath(), getGamesJsonPath, getBuiltinPath);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

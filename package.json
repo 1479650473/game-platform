@@ -14,9 +14,11 @@
     "preview": "vite preview",
     "package": "npm run build && electron-builder --win",
     "package:dir": "npm run build && electron-builder --win --dir",
+    "release": "npm run build && electron-builder --win --publish always",
     "build-game": "node scripts/build-game.cjs"
   },
   "dependencies": {
+    "electron-updater": "^6.8.9",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
@@ -51,6 +53,11 @@
         "to": "builtin"
       }
     ],
+    "publish": {
+      "provider": "github",
+      "owner": "1479650473",
+      "repo": "game-platform"
+    },
     "win": {
       "target": "nsis"
     },

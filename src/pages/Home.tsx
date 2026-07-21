@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
-import type { GameEntry } from '../types';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { GameEntry, GameUpdateInfo } from '../types';
 import { GameCardGrid } from '../components/GameCard';
 import { AddGameDialog } from '../components/AddGameDialog';
+import UpdateDialog from '../components/UpdateDialog';
 
 export default function Home() {
   const [games, setGames] = useState<GameEntry[]>([]);
@@ -10,6 +11,10 @@ export default function Home() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [showUpdateDialog, setShowUpdateDialog] = useState(false);
+  const [gameUpdates, setGameUpdates] = useState<GameUpdateInfo[]>([]);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const updateTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const loadGames = useCallback(async () => {
     try {
@@ -24,9 +29,44 @@ export default function Home() {
     }
   }, []);
 
+  const checkGameUpdates = useCallback(async () => {
+    if (!window.platformAPI) return;
+    try {
+      const result = await window.platformAPI.checkGameUpdates();
+      if (result.updates.length > 0) {
+        setGameUpdates(result.updates);
+        setUpdateAvailable(true);
+      }
+    } catch {
+      // 静默失败，不影响主要功能
+    }
+  }, []);
+
   useEffect(() => {
     loadGames();
   }, [loadGames]);
+
+  useEffect(() => {
+    checkGameUpdates();
+    updateTimerRef.current = setInterval(checkGameUpdates, 6 * 60 * 60 * 1000);
+    return () => {
+      if (updateTimerRef.current) clearInterval(updateTimerRef.current);
+    };
+  }, [checkGameUpdates]);
+
+  const handleUpdateGame = useCallback(async (gameId: string) => {
+    if (!window.platformAPI) return;
+    const result = await window.platformAPI.updateGame(gameId);
+    if (result.success) {
+      setGameUpdates((prev) => prev.filter((u) => u.gameId !== gameId));
+      if (gameUpdates.length <= 1) setUpdateAvailable(false);
+      setDialogMessage('游戏更新成功！');
+      setTimeout(() => setDialogMessage(null), 2000);
+    } else {
+      setDialogMessage(result.error || '更新失败');
+      setTimeout(() => setDialogMessage(null), 3000);
+    }
+  }, [gameUpdates]);
 
   const handleOpenGame = useCallback(async (gameId: string) => {
     if (window.platformAPI) {
@@ -78,7 +118,32 @@ export default function Home() {
         <h1 className="home-title">游戏平台</h1>
         <p className="home-subtitle">选择一个游戏开始游玩</p>
         <p className="home-credit">develop by csy</p>
+        <button
+          className="home-update-btn"
+          onClick={() => setShowUpdateDialog(true)}
+          title="检查更新"
+        >
+          {updateAvailable ? (
+            <span className="home-update-dot" />
+          ) : null}
+          检查更新
+        </button>
       </header>
+
+      {updateAvailable && gameUpdates.length > 0 && (
+        <div className="home-update-bar">
+          <span>
+            {gameUpdates.length} 个游戏有可用更新：
+            {gameUpdates.map((u) => u.name).join('、')}
+          </span>
+          <button
+            className="home-update-bar-btn"
+            onClick={() => handleUpdateGame(gameUpdates[0].gameId)}
+          >
+            更新 {gameUpdates[0].name}
+          </button>
+        </div>
+      )}
 
       {error && (
         <div className="home-error">
@@ -138,6 +203,10 @@ export default function Home() {
             </div>
           </div>
         </div>
+      )}
+
+      {showUpdateDialog && (
+        <UpdateDialog onClose={() => setShowUpdateDialog(false)} />
       )}
     </div>
   );
