@@ -454,7 +454,7 @@ npm run release
 <table>  
   <tr>    
     <td align="center">      
-      <a href="https://github.com/1479650473">        
+      <a href="https://github.com/koei11">        
         <img src="https://avatars.githubusercontent.com/u/306848865?v=4" width="60px" alt=""/>        
         <br /><sub><b>gr</b></sub>      
        </a>      
