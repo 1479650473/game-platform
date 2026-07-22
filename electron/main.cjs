@@ -281,7 +281,12 @@ function createPlatformWindow() {
     maximizable: true,
     fullscreenable: false,
     title: '游戏平台',
-    backgroundColor: '#0f0f23',
+    backgroundColor: '#09090d',
+    titleBarOverlay: {
+      color: '#09090d',
+      symbolColor: '#a1a1aa',
+      height: 36,
+    },
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
@@ -318,7 +323,12 @@ function createGameWindow(gameData) {
     maximizable: false,
     fullscreenable: false,
     title: name || id,
-    backgroundColor: '#0f0f23',
+    backgroundColor: '#09090d',
+    titleBarOverlay: {
+      color: '#09090d',
+      symbolColor: '#a1a1aa',
+      height: 32,
+    },
     parent: platformWindow,
     webPreferences: {
       preload: path.join(__dirname, 'game-preload.cjs'),
