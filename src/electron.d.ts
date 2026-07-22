@@ -31,6 +31,11 @@ declare global {
       checkGameUpdates: () => Promise<{ updates: GameUpdateInfo[]; registryUrl: string }>;
       updateGame: (gameId: string) => Promise<{ success: boolean; error?: string }>;
       onGameUpdateProgress: (callback: (data: { gameId: string; phase: string; progress?: number; error?: string }) => void) => () => void;
+      minimizeWindow: () => Promise<void>;
+      toggleMaximize: () => Promise<void>;
+      closeWindow: () => Promise<void>;
+      isMaximized: () => Promise<boolean>;
+      onMaximizeChange: (callback: () => void) => () => void;
     };
   }
 }

@@ -280,13 +280,10 @@ function createPlatformWindow() {
     resizable: true,
     maximizable: true,
     fullscreenable: false,
+    frame: false,
+    titleBarStyle: 'hidden',
     title: '游戏平台',
     backgroundColor: '#09090d',
-    titleBarOverlay: {
-      color: '#09090d',
-      symbolColor: '#a1a1aa',
-      height: 36,
-    },
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
@@ -309,6 +306,14 @@ function createPlatformWindow() {
     gameWindows.clear();
     platformWindow = null;
   });
+
+  platformWindow.on('maximize', () => {
+    platformWindow.webContents.send('window-maximize-change');
+  });
+
+  platformWindow.on('unmaximize', () => {
+    platformWindow.webContents.send('window-maximize-change');
+  });
 }
 
 function createGameWindow(gameData) {
@@ -322,13 +327,10 @@ function createGameWindow(gameData) {
     resizable: resizable !== false,
     maximizable: false,
     fullscreenable: false,
+    frame: false,
+    titleBarStyle: 'hidden',
     title: name || id,
     backgroundColor: '#09090d',
-    titleBarOverlay: {
-      color: '#09090d',
-      symbolColor: '#a1a1aa',
-      height: 32,
-    },
     parent: platformWindow,
     webPreferences: {
       preload: path.join(__dirname, 'game-preload.cjs'),
@@ -486,6 +488,29 @@ function registerIpcHandlers() {
         platformWindow.webContents.send('game-update-progress', progress);
       }
     });
+  });
+
+  ipcMain.handle('win-minimize', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) win.minimize();
+  });
+
+  ipcMain.handle('win-toggle-maximize', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) {
+      if (win.isMaximized()) win.unmaximize();
+      else win.maximize();
+    }
+  });
+
+  ipcMain.handle('win-close', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) win.close();
+  });
+
+  ipcMain.handle('win-is-maximized', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    return win ? win.isMaximized() : false;
   });
 }
 

@@ -22,4 +22,13 @@ contextBridge.exposeInMainWorld('platformAPI', {
     ipcRenderer.on('game-update-progress', handler);
     return () => ipcRenderer.removeListener('game-update-progress', handler);
   },
+  minimizeWindow: () => ipcRenderer.invoke('win-minimize'),
+  toggleMaximize: () => ipcRenderer.invoke('win-toggle-maximize'),
+  closeWindow: () => ipcRenderer.invoke('win-close'),
+  isMaximized: () => ipcRenderer.invoke('win-is-maximized'),
+  onMaximizeChange: (callback) => {
+    const handler = () => callback();
+    ipcRenderer.on('window-maximize-change', handler);
+    return () => ipcRenderer.removeListener('window-maximize-change', handler);
+  },
 });
