@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export default function TitleBar() {
+export default function TitleBar({ onSettings }: { onSettings: () => void }) {
   const [maximized, setMaximized] = useState(false);
   const checkRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -35,6 +35,23 @@ export default function TitleBar() {
     <div className="titlebar" onDoubleClick={handleDoubleClick}>
       <span className="titlebar-label">游戏平台</span>
       <div className="titlebar-actions">
+        <button className="titlebar-btn" onClick={onSettings} title="设置">
+          <svg width="11" height="11" viewBox="0 0 11 11">
+            <circle cx="5.5" cy="5.5" r="2.2" fill="none" stroke="currentColor" strokeWidth="1.2" />
+            <line x1="5.5" y1="5.5" x2="5.5" y2=".5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+            <line x1="5.5" y1="5.5" x2="5.5" y2="10.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+            <line x1="5.5" y1="5.5" x2=".5" y2="5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+            <line x1="5.5" y1="5.5" x2="10.5" y2="5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+            <line x1="3.7" y1="1.1" x2="3.2" y2=".3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+            <line x1="7.3" y1="1.1" x2="7.8" y2=".3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+            <line x1="3.7" y1="9.9" x2="3.2" y2="10.7" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+            <line x1="7.3" y1="9.9" x2="7.8" y2="10.7" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+            <line x1="1.1" y1="3.7" x2=".3" y2="3.2" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+            <line x1="9.9" y1="3.7" x2="10.7" y2="3.2" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+            <line x1="1.1" y1="7.3" x2=".3" y2="7.8" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+            <line x1="9.9" y1="7.3" x2="10.7" y2="7.8" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+          </svg>
+        </button>
         <button className="titlebar-btn" onClick={handleMinimize} title="最小化">
           <svg width="10" height="10" viewBox="0 0 10 10">
             <line x1="1" y1="5.5" x2="9" y2="5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />

@@ -810,6 +810,55 @@
   white-space: pre-wrap;
 }
 
+/* ===== Settings Dialog ===== */
+.settings-dialog {
+  max-width: 380px;
+}
+
+.settings-section {
+  margin-bottom: 6px;
+}
+
+.settings-label {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.theme-segment {
+  display: flex;
+  background: rgba(14, 14, 26, 0.35);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.theme-segment-btn {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-spring);
+}
+
+.theme-segment-btn.active {
+  background: var(--accent);
+  color: #042f2e;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
 /* ===== Watermark ===== */
 .watermark {
   position: fixed;
@@ -822,4 +871,48 @@
   pointer-events: none;
   user-select: none;
   z-index: 9999;
+}
+
+/* ===== Light mode overrides ===== */
+[data-theme="light"] .titlebar {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .titlebar-label {
+  color: #1a1a2e;
+}
+
+[data-theme="light"] .titlebar-btn {
+  color: #52525b;
+}
+
+[data-theme="light"] .titlebar-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .dialog-overlay {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="light"] .dialog-box {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .home-update-btn {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #52525b;
+}
+
+[data-theme="light"] .home-update-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: var(--accent-border);
+}
+
+[data-theme="light"] .theme-segment {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
 }

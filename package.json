@@ -1,7 +1,7 @@
 {
   "name": "game-platform",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Game platform launcher",
   "author": "csy & gr",
   "main": "electron/main.cjs",
@@ -39,6 +39,7 @@
   "build": {
     "appId": "com.gameplatform.desktop",
     "productName": "GamePlatform",
+    "icon": "resources/app-icon.png",
     "asar": false,
     "directories": {
       "output": "release"
