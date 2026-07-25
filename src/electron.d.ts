@@ -36,6 +36,8 @@ declare global {
       closeWindow: () => Promise<void>;
       isMaximized: () => Promise<boolean>;
       onMaximizeChange: (callback: () => void) => () => void;
+      pullNewGames: () => Promise<{ installed: { gameId: string; name: string }[]; errors: { gameId?: string; name?: string; error: string }[]; msg?: string }>;
+      onNewGamesInstalled: (callback: (gameIds: string[]) => void) => () => void;
     };
   }
 }

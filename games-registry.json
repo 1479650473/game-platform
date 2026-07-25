@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "games": {
     "sudoku": {
       "name": "数独",
@@ -24,6 +24,12 @@
       "latest": "1.1.0",
       "url": "https://github.com/1479650473/game-platform/releases/download/v1.0.0/snake.zip",
       "changelog": "初始版本"
+    },
+    "2048": {
+      "name": "2048",
+      "latest": "1.0.0",
+      "url": "https://github.com/1479650473/game-platform/releases/download/v1.2.0/2048.zip",
+      "changelog": "Teal 风格重制版"
     }
   }
 }

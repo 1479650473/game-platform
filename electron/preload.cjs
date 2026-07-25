@@ -22,6 +22,12 @@ contextBridge.exposeInMainWorld('platformAPI', {
     ipcRenderer.on('game-update-progress', handler);
     return () => ipcRenderer.removeListener('game-update-progress', handler);
   },
+  pullNewGames: () => ipcRenderer.invoke('pull-new-games'),
+  onNewGamesInstalled: (callback) => {
+    const handler = (_event, gameIds) => callback(gameIds);
+    ipcRenderer.on('new-games-installed', handler);
+    return () => ipcRenderer.removeListener('new-games-installed', handler);
+  },
   minimizeWindow: () => ipcRenderer.invoke('win-minimize'),
   toggleMaximize: () => ipcRenderer.invoke('win-toggle-maximize'),
   closeWindow: () => ipcRenderer.invoke('win-close'),

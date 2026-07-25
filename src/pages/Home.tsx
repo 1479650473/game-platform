@@ -14,6 +14,7 @@ export default function Home() {
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
   const [gameUpdates, setGameUpdates] = useState<GameUpdateInfo[]>([]);
   const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [pullingGames, setPullingGames] = useState(false);
   const updateTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const loadGames = useCallback(async () => {
@@ -53,6 +54,16 @@ export default function Home() {
       if (updateTimerRef.current) clearInterval(updateTimerRef.current);
     };
   }, [checkGameUpdates]);
+
+  useEffect(() => {
+    if (!window.platformAPI) return;
+    const unsub = window.platformAPI.onNewGamesInstalled((gameIds) => {
+      loadGames();
+      setDialogMessage(`已自动安装 ${gameIds.length} 个新游戏：${gameIds.join('、')}`);
+      setTimeout(() => setDialogMessage(null), 4000);
+    });
+    return () => unsub();
+  }, [loadGames]);
 
   const handleUpdateGame = useCallback(async (gameId: string) => {
     if (!window.platformAPI) return;
@@ -110,6 +121,31 @@ export default function Home() {
     setDeleteConfirm(null);
   }, []);
 
+  const handlePullNewGames = useCallback(async () => {
+    if (!window.platformAPI) return;
+    setPullingGames(true);
+    try {
+      const result = await window.platformAPI.pullNewGames();
+      if (result.installed.length > 0) {
+        await loadGames();
+        setDialogMessage(`已安装 ${result.installed.map((g) => g.name).join('、')}`);
+        setTimeout(() => setDialogMessage(null), 3000);
+      } else if (result.msg) {
+        setDialogMessage(result.msg);
+        setTimeout(() => setDialogMessage(null), 2000);
+      }
+      if (result.errors.length > 0) {
+        setDialogMessage(`部分安装失败：${result.errors.map((e) => e.name || e.gameId).join('、')}`);
+        setTimeout(() => setDialogMessage(null), 4000);
+      }
+    } catch {
+      setDialogMessage('拉取失败，请检查网络连接');
+      setTimeout(() => setDialogMessage(null), 3000);
+    } finally {
+      setPullingGames(false);
+    }
+  }, [loadGames]);
+
   const gameToDelete = deleteConfirm ? games.find((g) => g.id === deleteConfirm) : null;
 
   return (
@@ -130,6 +166,14 @@ export default function Home() {
           >
             {updateAvailable && <span className="home-update-dot" />}
             检查更新
+          </button>
+          <button
+            className="home-update-btn"
+            onClick={handlePullNewGames}
+            disabled={pullingGames}
+            title="拉取新游戏"
+          >
+            {pullingGames ? '拉取中...' : '拉取新游戏'}
           </button>
         </div>
       </header>

@@ -2,7 +2,7 @@ const { app, BrowserWindow, Menu, dialog, ipcMain, shell } = require('electron')
 const path = require('node:path');
 const fs = require('node:fs');
 const { initAutoUpdater, checkForUpdates, downloadUpdate, installUpdate, getUpdateStatus } = require('./updater.cjs');
-const { initGameUpdater, checkGameUpdates, updateGame } = require('./game-updater.cjs');
+const { initGameUpdater, checkGameUpdates, updateGame, checkNewGames } = require('./game-updater.cjs');
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -490,6 +490,46 @@ function registerIpcHandlers() {
     });
   });
 
+  ipcMain.handle('pull-new-games', async () => {
+    try {
+      const result = await checkNewGames();
+      if (result.newGames.length === 0) return { installed: [], msg: '没有新游戏' };
+
+      const installed = [];
+      const errors = [];
+
+      for (const game of result.newGames) {
+        try {
+          const r = await updateGame(game.gameId, (progress) => {
+            if (platformWindow && !platformWindow.isDestroyed()) {
+              platformWindow.webContents.send('game-update-progress', progress);
+            }
+          });
+
+          if (r.success) {
+            const gameDir = getGameDir(game.gameId);
+            const gameJsonPath = path.join(gameDir, 'game.json');
+            if (fs.existsSync(gameJsonPath)) {
+              const meta = JSON.parse(fs.readFileSync(gameJsonPath, 'utf-8'));
+              const iconFiles = fs.readdirSync(gameDir).filter((f) => /\.(png|svg|ico|jpg|jpeg)$/i.test(f));
+              const iconFile = meta.icon && iconFiles.includes(meta.icon) ? meta.icon : iconFiles[0] || '';
+              addGameEntry(meta, iconFile);
+            }
+            installed.push({ gameId: game.gameId, name: game.name });
+          } else {
+            errors.push({ gameId: game.gameId, name: game.name, error: r.error });
+          }
+        } catch (err) {
+          errors.push({ gameId: game.gameId, name: game.name, error: err.message });
+        }
+      }
+
+      return { installed, errors };
+    } catch (err) {
+      return { installed: [], errors: [{ error: err.message }] };
+    }
+  });
+
   ipcMain.handle('win-minimize', (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (win) win.minimize();
@@ -521,6 +561,42 @@ app.whenReady().then(() => {
   createPlatformWindow();
   initAutoUpdater(platformWindow);
   initGameUpdater(getUserGamesPath(), getGamesJsonPath, getBuiltinPath);
+
+  // Auto-pull new games on startup (silent, 3s delay to let window load)
+  const autoPullNewGames = async () => {
+    try {
+      const result = await checkNewGames();
+      if (result.newGames.length === 0) return;
+
+      if (platformWindow && !platformWindow.isDestroyed()) {
+        platformWindow.webContents.send('game-update-progress', { gameId: '__batch__', phase: 'checking', progress: 0 });
+      }
+
+      for (const game of result.newGames) {
+        const r = await updateGame(game.gameId, (progress) => {
+          if (platformWindow && !platformWindow.isDestroyed()) {
+            platformWindow.webContents.send('game-update-progress', progress);
+          }
+        });
+
+        if (r.success) {
+          const gameDir = getGameDir(game.gameId);
+          const gameJsonPath = path.join(gameDir, 'game.json');
+          if (fs.existsSync(gameJsonPath)) {
+            const meta = JSON.parse(fs.readFileSync(gameJsonPath, 'utf-8'));
+            const iconFiles = fs.readdirSync(gameDir).filter((f) => /\.(png|svg|ico|jpg|jpeg)$/i.test(f));
+            const iconFile = meta.icon && iconFiles.includes(meta.icon) ? meta.icon : iconFiles[0] || '';
+            addGameEntry(meta, iconFile);
+          }
+        }
+      }
+
+      if (platformWindow && !platformWindow.isDestroyed()) {
+        platformWindow.webContents.send('new-games-installed', result.newGames.map((g) => g.gameId));
+      }
+    } catch (_) { /* silent on startup */ }
+  };
+  setTimeout(autoPullNewGames, 3000);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

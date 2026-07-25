@@ -177,4 +177,33 @@ async function updateGame(gameId, notifyCb) {
   }
 }
 
-module.exports = { initGameUpdater, checkGameUpdates, updateGame };
+async function checkNewGames() {
+  try {
+    const data = await httpGet(REGISTRY_URL);
+    const registry = JSON.parse(data.toString('utf-8'));
+
+    if (!registry || !registry.games) return { newGames: [] };
+
+    const localIds = new Set();
+    if (fs.existsSync(userGamesJsonPath)) {
+      try {
+        const local = JSON.parse(fs.readFileSync(userGamesJsonPath, 'utf-8'));
+        for (const g of local) localIds.add(g.id);
+      } catch (_) { /**/ }
+    }
+
+    const newGames = [];
+    for (const [gameId, info] of Object.entries(registry.games)) {
+      if (!localIds.has(gameId)) {
+        newGames.push({ gameId, name: info.name || gameId, url: info.url });
+      }
+    }
+
+    return { newGames };
+  } catch (err) {
+    console.error('checkNewGames failed:', err.message);
+    return { newGames: [] };
+  }
+}
+
+module.exports = { initGameUpdater, checkGameUpdates, updateGame, checkNewGames };
