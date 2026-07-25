@@ -1,0 +1,14 @@
+{
+  "id": "2048",
+  "name": "2048",
+  "description": "经典2048数字游戏 - 方向键滑动合并，挑战2048及以上高分",
+  "version": "1.0.0",
+  "author": "Koei1102",
+  "entry": "index.html",
+  "icon": "icon.png",
+  "width": 420,
+  "height": 540,
+  "minWidth": 400,
+  "minHeight": 500,
+  "resizable": true
+}
