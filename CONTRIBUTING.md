@@ -23,7 +23,7 @@ npm run electron:dev
 - 主进程：CommonJS（`electron/` 下的 `.cjs` 文件）
 - Lint：`npm run lint`（基于 oxlint）
 - Type Check：`npm run build` 包含 `tsc -b`
-- Commit 消息请用中文，格式随意
+- Commit 消息请用英文或中文，格式随意
 
 ## 提交流程
 

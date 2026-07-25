@@ -445,10 +445,17 @@ npm run release
     <td align="center">
       <a href="https://github.com/1479650473">
         <img src="https://github.com/1479650473.png" width="60px" alt=""/>
-        <br /><sub><b>csy & gr</b></sub>
+        <br /><sub><b>csy & xiaoguang</b></sub>
       </a>
       <br /><sub>💻 🎨 📦</sub>
-    </td>
+    </td>   
+    <td align="center">      
+      <a href="https://github.com/koei11">        
+        <img src="https://avatars.githubusercontent.com/u/306848865?v=4" width="60px" alt=""/>        
+        <br /><sub><b>gr</b></sub>      
+       </a>      
+      <br /><sub>💻 🎨 📦</sub>    
+    </td>  
   </tr>
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
