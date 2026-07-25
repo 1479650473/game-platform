@@ -101,7 +101,12 @@ export default function UpdateDialog({ onClose }: UpdateDialogProps) {
 
           {status.state === 'error' && (
             <div className="update-state">
-              <p className="update-error">{status.error || '检查更新失败'}</p>
+              <p className="update-error">
+                {(() => {
+                  const msg = status.error || '检查更新失败';
+                  return msg.length > 250 ? msg.slice(0, 250) + '…' : msg;
+                })()}
+              </p>
             </div>
           )}
         </div>

@@ -582,6 +582,8 @@
   border-radius: var(--radius-card);
   padding: 30px;
   max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
   width: 90%;
   animation: dialog-in 0.3s var(--ease-spring);
 }
@@ -801,6 +803,11 @@
 .update-error {
   color: #fca5a5;
   font-size: 0.9rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-height: 140px;
+  overflow-y: auto;
+  white-space: pre-wrap;
 }
 
 /* ===== Watermark ===== */
